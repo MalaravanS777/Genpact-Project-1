@@ -1,6 +1,8 @@
 package com.bank.controller;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -50,7 +52,9 @@ public class Transaction1 extends HttpServlet {
 		if(type.equals("credit")) {
 			Transaction ts1=new Transaction(desc,0,amt,cdao.getBalance(accno));
 			if(cdao.credit(accno, ts1)) {
-				response.sendRedirect("CustomerAction.jsp?msg=success&accno="+accno);
+				request.setAttribute("accno",accno);
+				RequestDispatcher rd=request.getRequestDispatcher("CustomerAction.jsp");
+				rd.forward(request, response);
 			}
 			else {
 				response.sendRedirect("Error.jsp?msg=error");
@@ -60,7 +64,9 @@ public class Transaction1 extends HttpServlet {
 			Transaction ts2=new Transaction(desc,amt,0,cdao.getBalance(accno));
 			switch(cdao.withdraw(accno, ts2)) {
 			case "success":
-				response.sendRedirect("CustomerAction.jsp?msg=success&accno="+accno);
+				request.setAttribute("accno",accno);
+				RequestDispatcher rd=request.getRequestDispatcher("CustomerAction.jsp");
+				rd.forward(request, response);
 				break;
 			case "high":
 				response.sendRedirect("Debit.jsp?msg=high");
